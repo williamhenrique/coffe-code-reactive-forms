@@ -1,42 +1,67 @@
 <po-page-default p-title="AppName">
-  <form>
+  <form [formGroup]="form">
     <div class="po-row">
 
-      <po-widget class="po-xl-6 po-lg-6 po-md-6 po-sm-6">
-        <po-input name="input" p-label="Title"> </po-input>
-        <!-- <div class="po-font-text po-text-color-07">
+
+      <po-widget formGroupName="ticket" class="po-xl-6 po-lg-6 po-md-6 po-sm-6">
+        <po-input formControlName="title" name="input" p-label="Title"> </po-input>
+        <div class="po-font-text po-text-color-07" *ngIf="required('title', 'ticket')">
           Email not exist
-        </div> -->
-        <po-textarea name="textarea" p-label="Description"> </po-textarea>
+        </div>
+        <po-textarea   formControlName="description" name="textarea" p-label="Description"> </po-textarea>
+        <div class="po-font-text po-text-color-07" *ngIf="required('description', 'ticket')">
+          Description not exist
+        </div>
       </po-widget>
 
       <po-widget class="po-xl-4 po-lg-4 po-md-4 po-sm-4">
-        <po-input name="input" p-label="Assign User Email"> </po-input>
-        <po-input name="input" p-label="Issue Code"> </po-input>
-        <po-checkbox name="checkbox" p-label="Close issue?"> </po-checkbox>
+        <div formGroupName="assign">
+            <po-input  formControlName="assign_email"  name="input" p-label="Assign User Email"> </po-input>
+            <div class="po-font-text po-text-color-07" *ngIf="invalidEmailUser">
+              email invalid
+            </div>
+
+        </div>
+        <div formGroupName="issue">
+          <po-input formControlName="issue_code" name="input" p-label="Issue Code"> </po-input>
+
+          <div class="po-font-text po-text-color-07" *ngIf="invalidIssueCode">
+            issue_code invalid
+          </div>
+
+
+
+          <po-checkbox formControlName="issue_close" name="checkbox" p-label="Close issue?"> </po-checkbox>
+        </div>
+
       </po-widget>
 
-      <po-widget class="po-xl-6 po-lg-6 po-md-6 po-sm-6" p-title="Comments">
-        <po-textarea name="textarea" p-label="Comment"> </po-textarea>
+      <po-widget class="po-xl-6 po-lg-6 po-md-6 po-sm-6" p-title="Comments" formGroupName="comment">
+        <po-textarea formControlName="text" name="textarea" p-label="Comment"> </po-textarea>
         <div class="ticket_comment__btn">
-          <po-button p-icon="po-icon-plus" p-label="Add" p-type="primary" [p-disabled]=""></po-button>
+          <po-button p-icon="po-icon-plus" p-label="Add" p-type="primary" [p-disabled]="" (p-click)="add()"></po-button>
         </div>
-        <div class="po-mt-1">
+
+        <div class="po-mt-1" *ngFor="let item of form.get('comment.comments')['controls']; let i = index" >
           <div class="po-xl-11 po-lg-11 po-md-11 po-sm-11">
-            <po-info p-label="Comment" p-value="Comment 2"> </po-info>
+            <po-info p-label="Comment" [p-value]="item.value.comment_text"> </po-info>
           </div>
           <div class="po-xl-1 po-lg-1 po-md-1 po-sm-1">
-            <po-button p-icon="po-icon-delete" class="ticket_comment__btn" p-type="danger" p-small [p-disabled]="">
+            <po-button p-icon="po-icon-delete" class="ticket_comment__btn" p-type="danger" p-small [p-disabled]="" (p-click)="remove(i)">
             </po-button>
           </div>
         </div>
+
       </po-widget>
 
       <div class="po-xl-4 po-lg-4 po-md-4 po-sm-4" p-title="Form Debbug">
         <po-widget p-title="Form Debbug">
+          <pre>{{form.value | json}}</pre>
+
+
         </po-widget>
-        <po-button class="ticket_comment__btn" p-type="danger" p-label="Clear"></po-button>
-        <po-button class="ticket_comment__btn" p-type="primary" p-label="Save" [p-disabled]=""></po-button>
+        <po-button class="ticket_comment__btn" p-type="danger" p-label="Clear" (p-click)="clear()"></po-button>
+        <po-button class="ticket_comment__btn" p-type="primary" p-label="Save" [p-disabled]="form.invalid"></po-button>
       </div>
 
     </div>
